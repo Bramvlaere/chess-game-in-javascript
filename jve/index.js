@@ -1,10 +1,10 @@
 var Play = function() {
-    var _this = this; //provide a mechanism for when object functions are called always allows me to references back
+    var _this = this;
     this.boardObj = document.getElementById("board");
     this.cemetery = document.getElementById("cemetery");
     this.data = document.getElementById("data");
-    this.board = {}; //empty list
-    this.tempClass = ""; //empty string
+    this.board = {};
+    this.tempClass = "";
     this.moves = 0;
     this.blacks = [];
     this.round = "notBlacks";
@@ -14,10 +14,10 @@ var Play = function() {
     this.selected = null;
     document.addEventListener("locations", function(e) {
         document.addEventListener("thisIsMe", function(t) {
-            _this.clearSelect(); //clears all the pieces that are selected in the beginning of the game
-            _this.selected = t.detail; //what piece is selected 
-            _this.selected.getDomObj().className += " selected"; //give the piece a class to display it is selected
-            if (t.detail.type != "Pawn") { //in the beginning only pawns can move so we only allow that with the coordinated
+            _this.clearSelect();
+            _this.selected = t.detail;
+            _this.selected.getDomObj().className += " selected";
+            if (t.detail.type != "Pawn") {
                 for (var i in e.detail) {
                     for (var j in e.detail[i]) {
                         var temp = "x" + e.detail[i][j].x + "y" + e.detail[i][j].y;
@@ -41,7 +41,7 @@ var Play = function() {
                     } else {
                         break;
                     }
-                } //because the first moves in chess tha pawns can move one or two squares we do the coordintates twice
+                }
                 if (e.detail[1].length > 0 && _this.board["x" + e.detail[1][0].x + "y" + e.detail[1][0].y].occ && _this.board["x" + e.detail[1][0].x + "y" + e.detail[1][0].y].unit.team != t.detail.team) {
                     _this.targets.push(_this.board["x" + e.detail[1][0].x + "y" + e.detail[1][0].y]);
                 }
@@ -49,14 +49,14 @@ var Play = function() {
                     _this.targets.push(_this.board["x" + e.detail[2][0].x + "y" + e.detail[2][0].y]);
                 }
             }
-            _this.displayInfo(_this.selected); //display the info of the selected piece
+            _this.displayInfo(_this.selected);
             _this.showSelect();
         });
     });
     this.startNewGame();
 };
 
-Play.prototype = { //basically means that it inherists features from the above
+Play.prototype = {
     startNewGame: function() {
         var _this = this;
         this.boardObj.innerHTML = "";
@@ -100,7 +100,7 @@ Play.prototype = { //basically means that it inherists features from the above
         this.teamBlacks();
         this.teamNotBlacks();
     },
-    displayInfo: function(unit) { //basically reading in info from all the other functions
+    displayInfo: function(unit) {
         if (unit != undefined) {
             document.querySelector("#info > ul:first-of-type").style.visibility = "hidden";
             this.data.innerHTML = "";
@@ -161,7 +161,7 @@ Play.prototype = { //basically means that it inherists features from the above
         this.data.className = this.round + "Turn";
     },
     showSelect: function() {
-        for (var i = 0; i < this.validPos.length; i++) { //visual feedback on hovering and clicking
+        for (var i = 0; i < this.validPos.length; i++) {
             this.validPos[i].className += " valid ";
             this.validPos[i].addEventListener("mouseover", this.hover);
             this.validPos[i].addEventListener("mouseout", this.hoverOut);
@@ -182,10 +182,10 @@ Play.prototype = { //basically means that it inherists features from the above
     },
     location: function(e) {
         p.hoverOut(e);
-        p.moveHere(e.target); //where exactly is moved
+        p.moveHere(e.target);
         p.clearSelect();
     },
-    moveHere: function(e) { //function to actually move the piece and change the coordiantes
+    moveHere: function(e) {
         var temp = e.getAttribute("index");
         temp.split("");
         p.board["x" + temp[3] + "y" + temp[1]].obj.appendChild(p.selected.getDomObj());
@@ -193,16 +193,16 @@ Play.prototype = { //basically means that it inherists features from the above
         p.board["x" + temp[3] + "y" + temp[1]].unit = p.selected;
         p.board["x" + p.selected.pos.y + "y" + p.selected.pos.x].obj.className = p.board["x" + p.selected.pos.y + "y" + p.selected.pos.x].obj.className.replace(" selected", "");
         p.board["x" + p.selected.pos.y + "y" + p.selected.pos.x].occ = false;
-        p.board["x" + p.selected.pos.y + "y" + p.selected.pos.x].unit = null; //read out coordintates
-        p.selected.pos = { x: Number(temp[1]), y: Number(temp[3]) }; //change piece position
-        p.selected.moves += 1; //change the ampunt of moves that have been made
+        p.board["x" + p.selected.pos.y + "y" + p.selected.pos.x].unit = null;
+        p.selected.pos = { x: Number(temp[1]), y: Number(temp[3]) };
+        p.selected.moves += 1;
         if (p.round == "blacks") {
-            p.round = "notBlacks" //change the turn
+            p.round = "notBlacks"
         } else {
             p.round = "blacks"
         }
     },
-    kill: function(e) { //when you are withing the bounds of striking you can take over that list postion with your div
+    kill: function(e) {
         var _this = this;
         var temp = e.target.parentElement.getAttribute("index").split("");
         var pe = e.target.parentElement;
@@ -216,11 +216,11 @@ Play.prototype = { //basically means that it inherists features from the above
         }
         p.moveHere(pe);
         if (target.type == "King") {
-            p.gameOver(target.team) //if the king is killed the game over is triggered
+            p.gameOver(target.team)
         }
         p.clearSelect();
     },
-    gameOver: function(losers) { //game over give the option to replay and visualises the loser buttons
+    gameOver: function(losers) {
         var _this = this;
         document.querySelector("#over > div > p").innerHTML = losers + " loses!";
         document.getElementById("over").style.visibility = "visible";
@@ -232,7 +232,7 @@ Play.prototype = { //basically means that it inherists features from the above
             document.getElementById("over").style.visibility = "hidden";
         })
     },
-    teamBlacks: function() { //setup from both teams
+    teamBlacks: function() {
         var temp = new Unit("Rook");
         temp.team = "blacks";
         temp.pos = { x: 1, y: 1 };
@@ -241,11 +241,11 @@ Play.prototype = { //basically means that it inherists features from the above
         this.board["x" + 1 + "y" + 1].obj.appendChild(temp.getDomObj());
         this.board["x" + 1 + "y" + 1].occ = true;
         this.board["x" + 1 + "y" + 1].unit = temp;
-        var temp = new Unit("Knight"); //create new piece
-        temp.team = "blacks"; //determine what team it is on
-        temp.pos = { x: 2, y: 1 }; //setup the location of the new piece
-        temp.getDomObj().className = "blacks knight"; //give the class
-        this.blacks.push(temp); //push it in the list
+        var temp = new Unit("Knight");
+        temp.team = "blacks";
+        temp.pos = { x: 2, y: 1 };
+        temp.getDomObj().className = "blacks knight";
+        this.blacks.push(temp);
         this.board["x" + 1 + "y" + 2].obj.appendChild(temp.getDomObj());
         this.board["x" + 1 + "y" + 2].occ = true;
         this.board["x" + 1 + "y" + 2].unit = temp;
@@ -297,7 +297,7 @@ Play.prototype = { //basically means that it inherists features from the above
         this.board["x" + 1 + "y" + 8].obj.appendChild(temp.getDomObj());
         this.board["x" + 1 + "y" + 8].occ = true;
         this.board["x" + 1 + "y" + 8].unit = temp;
-        for (var i = 1; i <= 8; i++) { //create loop for pawns
+        for (var i = 1; i <= 8; i++) {
             var temp = new Unit("Pawn");
             temp.team = "blacks";
             temp.pos = { x: i, y: 2 };
@@ -386,7 +386,7 @@ Play.prototype = { //basically means that it inherists features from the above
     }
 };
 
-var Unit = function(type) { //create a funtion for creation of the pieces it takes in what piece and assigns the function
+var Unit = function(type) {
     var _this = this;
     this.domObj = null;
     this.type = type;
@@ -410,7 +410,7 @@ Unit.prototype = {
     getDomObj: function() {
         return this.domObj;
     },
-    PawnMovement: function() { //based on the given type here we say what movements are allowed
+    PawnMovement: function() {
         var m = [],
             t1 = [],
             t2 = [];

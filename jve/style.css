@@ -64,11 +64,11 @@
 }
 
 .blacks {
-    background-image: url("./nChessB.png");
+    background-image: url("./nChessJ.png");
 }
 
 .notBlacks {
-    background-image: url("./nChessW.png");
+    background-image: url("./nChessE.png");
 }
 
 .rook {
